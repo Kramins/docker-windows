@@ -1,0 +1,23 @@
+# escape=`
+FROM microsoft/nanoserver
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+
+ENV PYTHON_EMBED_VERSION 3.5.4
+ENV PYTHON_PIP_VERSION 9.0.1
+ENV PYTHON_LIB_NUMPY 1.13+mkl
+
+COPY wheel C:\wheel\
+
+RUN Invoke-WebRequest -Uri ('https://www.python.org/ftp/python/{0}/python-{0}-embed-amd64.zip' -f $env:PYTHON_EMBED_VERSION) -Outfile 'C:\python.zip'; `
+    Expand-Archive "python.zip" -DestinationPath 'C:/Python/' ;
+
+RUN $env:PATH = 'C:\Python;C:\Python\Scripts;{0}' -f $env:PATH ; `
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\' -Name Path -Value $env:PATH ;
+
+RUN Invoke-WebRequest 'https://bootstrap.pypa.io/get-pip.py' -OutFile 'get-pip.py' -UseBasicParsing ; `
+    $pipInstall = ('pip=={0}' -f $env:PYTHON_PIP_VERSION) ; `
+    python get-pip.py $pipInstall
+
+RUN pip install C:\wheel\numpy-1.13.1+mkl-cp35-cp35m-win_amd64.whl
+
+CMD ["python.exe"]
