@@ -1,0 +1,12 @@
+# escape=`
+FROM kramins/python:nanoserver
+
+COPY app\requirements.txt C:\app\requirements.txt
+
+WORKDIR C:\app\
+
+RUN pip install -r requirements.txt
+
+COPY app C:\app\
+
+CMD ["python", "main.py"]

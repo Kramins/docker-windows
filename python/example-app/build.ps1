@@ -1,0 +1,1 @@
+docker build . -t kramins/python-example-app

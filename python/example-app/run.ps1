@@ -1,0 +1,1 @@
+docker run --rm kramins/python-example-app
