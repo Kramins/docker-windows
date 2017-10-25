@@ -1,0 +1,33 @@
+# escape=`
+
+FROM microsoft/windowsservercore
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+
+# Jacket
+EXPOSE 9117
+#Radarr
+EXPOSE 7878 
+# Sonarr
+EXPOSE 8989
+# Deluge web
+EXPOSE 8112
+
+
+RUN iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex
+
+RUN choco install -y deluge
+RUN choco install --ignore-checksums -y sonarr 
+RUN choco install -y jackett 
+RUN choco install -y radarr  
+
+
+RUN Set-Service jackett -startuptype "manual"
+RUN Set-Service radarr -startuptype "manual"
+RUN Set-Service nzbdrone -startuptype "manual"
+
+VOLUME C:\Config
+VOLUME C:\Deluge_Temp
+ 
+COPY docker-entrypoint.ps1 /
+
+CMD docker-entrypoint.ps1
