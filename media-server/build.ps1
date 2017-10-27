@@ -1,1 +1,1 @@
-docker build . -t media-server
+docker build . -t kramins/media-server:windowsservercore
