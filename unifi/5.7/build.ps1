@@ -1,0 +1,1 @@
+docker build . -t kramins/unifi:5.7.19-84cd139873-windowsservercore
