@@ -1,13 +1,14 @@
 # escape=`
 
 FROM openjdk:8-windowsservercore
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
+SHELL ["powershell", "-Command", "$ErrorActionpuPreference = 'Stop';"]
 
-ENV UNIFI_VERSION=5.7.19-84cd139873
+ARG UNIFI_VERSION
+ENV UNIFI_VERSION ${UNIFI_VERSION}
 
 RUN iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex; `
     choco install -y 7zip; `
-    Invoke-WebRequest -Uri 'https://dl.ubnt.com/unifi/5.7.19-84cd139873/UniFi-installer.exe' -Outfile 'C:\UniFi-installer.exe';
+    Invoke-WebRequest -Uri ('https://dl.ubnt.com/unifi/{0}/UniFi-installer.exe' -f $env:UNIFI_VERSION) -Outfile 'C:\UniFi-installer.exe';
 RUN 7z x C:\UniFi-installer.exe -oC:\app\;
 
 VOLUME [ "C:/app/data" ]
