@@ -12,9 +12,9 @@ pipeline {
                 echo 'Testing..'
             }
         }
-        stage('Deploy') {
+        stage('Push To Docker') {
             steps {
-                echo 'Deploying....'
+                powershell  returnStatus: true, script: '.\\push-docker.ps1'
             }
         }
     }
