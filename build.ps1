@@ -37,7 +37,7 @@ $dirs.GetEnumerator() | Sort-Object Name | ForEach-Object {
   $dir = $_.Name
   Write-Host Building in directory $dir
   pushd $dir
-#   .\build.ps1
+   .\build.ps1
   popd
 }
 
