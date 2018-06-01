@@ -1,15 +1,24 @@
 # escape=`
-
-FROM openjdk:8-windowsservercore
+FROM microsoft/windowsservercore AS build 
 SHELL ["powershell", "-Command", "$ErrorActionpuPreference = 'Stop';"]
 
 ARG UNIFI_VERSION
 ENV UNIFI_VERSION ${UNIFI_VERSION}
 
 RUN iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex; `
-    choco install -y 7zip; `
-    Invoke-WebRequest -Uri ('https://dl.ubnt.com/unifi/{0}/UniFi-installer.exe' -f $env:UNIFI_VERSION) -Outfile 'C:\UniFi-installer.exe';
+    choco install -y 7zip;
+
+ADD https://dl.ubnt.com/unifi/${UNIFI_VERSION}/UniFi-installer.exe C:\UniFi-installer.exe
+
 RUN 7z x C:\UniFi-installer.exe -oC:\app\;
+
+FROM openjdk:8-windowsservercore AS final
+SHELL ["powershell", "-Command", "$ErrorActionpuPreference = 'Stop';"]
+
+ARG UNIFI_VERSION
+ENV UNIFI_VERSION ${UNIFI_VERSION}
+
+COPY --from=build C:\app C:\app
 
 VOLUME [ "C:/app/data" ]
 
